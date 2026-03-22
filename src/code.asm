@@ -4,7 +4,7 @@ include
 
 org !Empty
 every_frame_patch:
-    ldx !level_idx_level2
+    ldx !frame_counter_t
     jsr change_level
     jsr reload_level
     rts
