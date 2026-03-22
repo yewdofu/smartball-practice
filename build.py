@@ -17,7 +17,7 @@ c = subprocess.call
 
 EMULATOR = "mesen-s"
 
-ORIGINAL = "jellyboy.sfc"
+ORIGINAL = "jerryboy.sfc"
 OUT_DIR = "patched"
 
 OUT_FILE = "sb_practice.sfc"
