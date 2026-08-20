@@ -18,15 +18,16 @@ unlock_every_levels:
 org !Empty
 every_frame_patch:
     ldx !frame_counter_t
-    jsr change_level
+    jsr advance_level
     jsr reload_level
     rts
 
-change_level:
+advance_level:
     lda !controller_byetudlr
     cmp #%00011000
     bne .done
     inc !level_idx_level2
+    jmp load_level
 
 .done:
     rts
