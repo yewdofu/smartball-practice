@@ -9,7 +9,7 @@ Speedrun practice hack for Smart Ball (SNES).
 - Room reset
 - In-game timer
 
-### Build
+## Build
 Run following:
 ```bash
 python build.py
