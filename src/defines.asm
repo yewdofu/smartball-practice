@@ -5,6 +5,7 @@ include
 !controller_byetudlr = $046C
 !change_level_buttons = %00011000
 !reload_level_buttons = $30
+!stage_select_buttons = $30
 
 ; Game state
 !game_mode = $0466

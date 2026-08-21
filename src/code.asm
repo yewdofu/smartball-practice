@@ -10,6 +10,7 @@ org $008227
 org $00B330
 ingame_patch:
     jsr change_level
+    jsr open_stage_select
     jsr reload_level
     ldx !frame_counter_t ; original instruction
     rts

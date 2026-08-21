@@ -10,3 +10,14 @@ reload_level:
 
 .done:
     rts
+
+org $00B390
+open_stage_select:
+    lda !controller_byetudlr
+    cmp #!stage_select_buttons
+    bne .done
+    jsr timer_deactivate
+    jmp stage_select_init
+
+.done:
+    rts

@@ -4,7 +4,8 @@ Speedrun practice hack for Smart Ball (SNES).
 ## Features
 - Level unlock
 - Room advance
-- Level reset
+- Stage select (Start + Select)
+- Level reset (L + R)
 - Room reset
 - In-game timer
 
