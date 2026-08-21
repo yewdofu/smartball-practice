@@ -1,3 +1,6 @@
 incsrc "defines.asm"
 incsrc "labels.asm"
+incsrc "hijacks.asm"
 incsrc "code.asm"
+incsrc "reset.asm"
+incsrc "timer.asm"
