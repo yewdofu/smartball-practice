@@ -1,8 +1,8 @@
 include
 
 org $00840D
-load_level: ; it looks like
+load_level:
 
-org $0088cc
+org $0088CC
 update_game:
     jsr every_frame_patch
