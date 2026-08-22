@@ -2,7 +2,6 @@
 
 import os
 import sys
-import shutil
 import datetime
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'asar'))
@@ -17,10 +16,7 @@ OUT_PATH = os.path.join(OUT_DIR, OUT_FILE)
 
 
 def main():
-    if os.path.exists(OUT_DIR):
-        shutil.rmtree(OUT_DIR)
-    os.mkdir(OUT_DIR)
-    shutil.copy(ORIGINAL, OUT_PATH)
+    os.makedirs(OUT_DIR, exist_ok=True)
 
     with open(ORIGINAL, "rb") as f:
         rom_data = f.read()

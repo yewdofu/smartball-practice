@@ -20,3 +20,6 @@ room_transition_fade_in:
 
 org $0088AF
 room_load_finalize:
+
+org $0088CF
+game_update_continue:

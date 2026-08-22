@@ -13,6 +13,8 @@ ingame_patch:
     jsr open_stage_select
     jsr reload_level
     jsr reload_room
+    jsr state_save
+    jsr state_load
     ldx !frame_counter_t ; original instruction
     rts
 

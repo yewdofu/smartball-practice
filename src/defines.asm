@@ -76,6 +76,8 @@ include
 !room_hp_restore_pending = $1FBD
 !room_checkpoint_player_state = $1FBE
 !room_checkpoint_hp = $1FBF
+!save_latch = $1FC0
+!load_latch = $1FC1
 
 ; Hardware registers
 !inidisp = $2100
@@ -85,6 +87,66 @@ include
 !oam_address_high = $2103
 !oam_data = $2104
 !hvbjoy = $4212
+!vmain = $2115
+!vmain_inc_high = $80
+!vmaddr_low = $2116
+!vmaddr_high = $2117
+!vram_data_write_low = $2118
+!vram_data_write_high = $2119
+!cgadd = $2121
+!cgdata_write = $2122
+!oam_data_read = $2138
+!vram_data_read_low = $2139
+!vram_data_read_high = $213A
+!cgdata_read = $213B
+
+; Save state buttons (このゲームの入力規約: $046B=L/R, $046C=Start/Select)
+!r_button = $10
+!l_button = $20
+!start_button = $10
+
+; Save state transfer
+!state_magic_high = $A5
+!state_magic_low = $5B
+!state_magic_invalid = $00
+!state_format_version = $01
+!state_rom_compatibility = $01
+!state_save_stack_offset = $000A
+!state_stack_y_low = $01
+!state_stack_y_high = $02
+!state_stack_x_low = $03
+!state_stack_x_high = $04
+!state_stack_p = $06
+!inidisp_forced_blank_full = $8F
+!inidisp_display_full = $0F
+!oam_high_table_select = $01
+
+; Save state SRAM layout (256KB battery SRAM, 32KB per LoROM bank)
+!sram_wram = $700000
+!sram_wram2 = $710000
+!sram_wram3 = $720000
+!sram_wram4 = $730000
+!sram_vram = $740000
+!sram_vram2 = $750000
+!sram_cgram = $760000
+!sram_oam = $760200
+!sram_oam_high = $760400
+!sram_regs = $760420
+!ss_s = 0
+!ss_d = 2
+!ss_x = 4
+!ss_y = 6
+!ss_a = 8
+!ss_p = 10
+!ss_db = 11
+!ss_4200 = 12
+!ss_k = 13
+!ss_pc_l = 14
+!ss_pc_h = 15
+!ss_magic_h = 16
+!ss_magic_l = 17
+!ss_format_version = 18
+!ss_rom_compatibility = 19
 
 ; Timer limits and conversion
 !timer_frames_per_second = 60
