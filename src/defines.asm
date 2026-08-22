@@ -17,10 +17,12 @@ include
 !screen_transition_flag = $0472
 !room_variant = $1E6B
 !room_reload_state = $1E3C
+!player_hp = $1E7C
 !highest_unlocked_level = $1E33
 !all_levels_unlocked = $0F
 
 ; Player position
+!player_state = $0449
 !position_x = $1E2F
 !position_y = $1E31
 !ball_count = $1E3C
@@ -66,6 +68,14 @@ include
 !room_checkpoint_previous_camera_y = $1FB4
 !room_checkpoint_restore_pending = $1FB6
 !room_checkpoint_ball_count = $1FB7
+!room_timer_checkpoint_frame = $1FB8
+!room_timer_checkpoint_sec = $1FB9
+!room_timer_checkpoint_min = $1FBA
+!room_timer_capture_pending = $1FBB
+!room_timer_restore_pending = $1FBC
+!room_hp_restore_pending = $1FBD
+!room_checkpoint_player_state = $1FBE
+!room_checkpoint_hp = $1FBF
 
 ; Hardware registers
 !inidisp = $2100
@@ -87,6 +97,8 @@ include
 !timer_sequence_write_mask = $01
 !reset_latch_active = $01
 !room_checkpoint_active_value = $01
+!room_timer_pending_value = $01
+!room_timer_restore_ready_value = $02
 !room_transition_standard = $02
 !room_camera_x_mask = $00F0
 !room_camera_y_mask = $000F

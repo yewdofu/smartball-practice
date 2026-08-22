@@ -27,12 +27,19 @@ org $0085B7
     nop
 pullpc
 
-org $00B380
+org $00B3A0
 timer_prepare:
     jsr timer_deactivate
+    lda !room_timer_restore_pending
+    beq .gameplay
+    lda #!room_timer_restore_ready_value
+    sta !room_timer_restore_pending
+.gameplay:
     lda #!game_mode_gameplay ; 置換した元処理
     sta !game_mode
     rts
+
+warnpc $00B400
 
 ; ------------------------------------------------------------
 ; レベル準備完了後、操作を受け付ける最初のフレームで開始する。
@@ -90,9 +97,37 @@ timer_start:
     sep #!status_accumulator_8bit
     rep #!status_index_16bit
     stz !timer_state
+    lda !room_timer_restore_pending
+    beq .reset
+    cmp #!room_timer_restore_ready_value
+    bne .defer
+    stz !room_timer_restore_pending
+    lda !room_timer_checkpoint_frame
+    sta !timer_frame
+    lda !room_timer_checkpoint_sec
+    sta !timer_sec
+    lda !room_timer_checkpoint_min
+    sta !timer_min
+    bra .activate
+
+.reset:
     stz !timer_frame
     stz !timer_sec
     stz !timer_min
+.activate:
+    lda !room_hp_restore_pending
+    bne .checkpoint_restored
+    lda !ball_count
+    sta !room_checkpoint_ball_count
+    lda !player_state
+    sta !room_checkpoint_player_state
+    lda !player_hp
+    sta !room_checkpoint_hp
+    bra .start
+
+.checkpoint_restored:
+    stz !room_hp_restore_pending
+.start:
     stz !timer_sequence
     lda #!timer_state_running
     sta !timer_state
@@ -101,6 +136,7 @@ timer_start:
     lda !rdnmi
     lda #!nmitimen_timer_enabled
     sta !nmitimen
+.defer:
     plp
     rts
 
@@ -251,6 +287,7 @@ timer_centiseconds:
 ; NMI timer tick
 ;   Preserve the interrupted CPU state and do not touch PPU/APU.
 ; ------------------------------------------------------------
+warnpc $00B600
 org $00B600
 timer_nmi:
     pha
@@ -297,3 +334,43 @@ timer_nmi:
     plb
     pla
     rti
+
+; ------------------------------------------------------------
+; ルーム遷移の明転完了時に、操作再開フレームのタイマーを保存する。
+; ------------------------------------------------------------
+org $00B800
+finish_room_transition:
+    jsr room_transition_fade_in ; original instruction
+    php
+    pha
+    lda !room_timer_capture_pending
+    beq .done
+    stz !room_timer_capture_pending
+    jsr timer_capture_room_checkpoint
+    lda #!room_checkpoint_active_value
+    sta !room_checkpoint_active
+
+.done:
+    pla
+    plp
+    rts
+
+timer_capture_room_checkpoint:
+.snapshot:
+    lda !timer_sequence
+    and #!timer_sequence_write_mask
+    bne .snapshot
+    lda !timer_sequence
+    sta !timer_snapshot_sequence
+    lda !timer_frame
+    sta !room_timer_checkpoint_frame
+    lda !timer_sec
+    sta !room_timer_checkpoint_sec
+    lda !timer_min
+    sta !room_timer_checkpoint_min
+    lda !timer_sequence
+    cmp !timer_snapshot_sequence
+    bne .snapshot
+    rts
+
+warnpc $00B840

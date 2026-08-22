@@ -11,19 +11,31 @@ open_stage_select:
 .done:
     rts
 
+warnpc $00B3A0
+
 org $00B680
 reload_current_room:
+    lda !room_timer_capture_pending
+    bne .pending
     jsr timer_deactivate
     jsr room_reset_blank
     rep #!status_index_16bit
     ldx.w #!stack_initial
     txs
+    lda #!room_checkpoint_active_value
+    sta !room_hp_restore_pending
     lda !room_checkpoint_active
     beq .level
+    lda #!room_timer_pending_value
+    sta !room_timer_restore_pending
     jmp load_room_checkpoint
 
 .level:
+    stz !room_timer_restore_pending
     jmp load_current_area
+
+.pending:
+    rts
 
 room_reset_blank:
     php
@@ -45,14 +57,18 @@ room_reset_blank:
     plp
     rts
 
+warnpc $00B700
+
 org $00B660
 prepare_area_load:
     stz !room_checkpoint_active
     stz !room_checkpoint_restore_pending
+    stz !room_timer_capture_pending
+    stz !room_timer_restore_pending
     jsr calc_stage_index ; original instruction
     rts
 
-org $00B6C0
+org $00B840
 capture_room_transition:
     sta !transition_animation_state ; original instruction
     php
@@ -65,12 +81,18 @@ capture_room_transition:
     sta !room_checkpoint_variant
     lda !ball_count
     sta !room_checkpoint_ball_count
-    lda #!room_checkpoint_active_value
-    sta !room_checkpoint_active
+    lda !player_state
+    sta !room_checkpoint_player_state
+    lda !player_hp
+    sta !room_checkpoint_hp
+    stz !room_checkpoint_active
+    lda #!room_timer_pending_value
+    sta !room_timer_capture_pending
     bra .done
 
 .unsupported:
     stz !room_checkpoint_active
+    stz !room_timer_capture_pending
 .done:
     pla
     plp
@@ -79,7 +101,10 @@ capture_room_transition:
 clear_instant_transition:
     stz !room_restore_position ; original instruction
     stz !room_checkpoint_active
+    stz !room_timer_capture_pending
     rts
+
+warnpc $00B8A0
 
 org $00B700
 load_room_checkpoint:
@@ -116,24 +141,6 @@ load_room_checkpoint:
     sta !screen_transition_flag
     jmp load_room
 
-org $00B760
-restore_game_checkpoint:
-    lda !room_checkpoint_restore_pending
-    beq .original
-    phy
-    ldy !room_checkpoint_previous_position
-    sty !saved_position
-    ldy !room_checkpoint_previous_camera_x
-    sty !saved_camera_x
-    ldy !room_checkpoint_previous_camera_y
-    sty !saved_camera_y
-    ply
-    stz !room_checkpoint_restore_pending
-
-.original:
-    lda !room_reload_state ; original instruction
-    rts
-
 org $00B790
 reload_level:
     lda !controller_axlr
@@ -149,6 +156,7 @@ reload_level:
     lda #!reset_latch_active
     sta !reset_latch
     jsr timer_deactivate
+    stz !room_timer_restore_pending
     rep #!status_index_16bit
     ldx.w #!stack_initial
     txs
@@ -174,3 +182,49 @@ reload_room:
     rts
 
 warnpc $00B800
+
+org $00B900
+prepare_level_load:
+    stz !room_checkpoint_active
+    stz !room_checkpoint_restore_pending
+    stz !room_timer_capture_pending
+    stz !room_timer_restore_pending
+    stz !room_hp_restore_pending
+    lda !level_idx_level2 ; original instruction
+    rts
+
+warnpc $00B920
+
+org $00B8A0
+restore_game_checkpoint:
+    lda !room_checkpoint_restore_pending
+    beq .original
+    phy
+    ldy !room_checkpoint_previous_position
+    sty !saved_position
+    ldy !room_checkpoint_previous_camera_x
+    sty !saved_camera_x
+    ldy !room_checkpoint_previous_camera_y
+    sty !saved_camera_y
+    ply
+    stz !room_checkpoint_restore_pending
+
+.original:
+    lda !room_reload_state ; original instruction
+    rts
+
+finish_room_load:
+    lda !room_hp_restore_pending
+    beq .original
+    lda !room_checkpoint_ball_count
+    sta !ball_count
+    lda !room_checkpoint_player_state
+    sta !player_state
+    lda !room_checkpoint_hp
+    sta !player_hp
+
+.original:
+    jsr room_load_finalize ; original instruction
+    rts
+
+warnpc $00B900
