@@ -4,13 +4,19 @@ include
 !controller_axlr = $046B
 !controller_byetudlr = $046C
 !change_level_buttons = %00011000
-!reload_level_buttons = $30
+!reload_room_buttons = $30
+!reload_level_axlr_buttons = $B0
+!reload_level_byetudlr_buttons = $80
 !stage_select_buttons = $30
 
 ; Game state
 !game_mode = $0466
 !game_mode_gameplay = $01
 !game_mode_title = $02
+!transition_animation_state = $0440
+!screen_transition_flag = $0472
+!room_variant = $1E6B
+!room_reload_state = $1E3C
 !highest_unlocked_level = $1E33
 !all_levels_unlocked = $0F
 
@@ -25,6 +31,15 @@ include
 !level_idx_level = $0435       ; current
 !level_idx_level2 = $1E38      ; next
 !level_clear = $0470
+
+; Room checkpoint
+!saved_position = $1E96
+!saved_camera_x = $1E98
+!saved_camera_y = $1E9A
+!room_restore_position = $1E9C
+!room_transition_table = $10DA00
+!room_transition_position = $10D9FD
+!room_transition_camera = $10D9FF
 
 ; Frame counter
 !frame_counter_e = $1E44       ; effective
@@ -42,13 +57,24 @@ include
 !timer_snapshot_min = $1FA8
 !timer_sequence = $1FA9
 !timer_snapshot_sequence = $1FAA
+!reset_latch = $1FAB
+!room_checkpoint_active = $1FAC
+!room_checkpoint_record = $1FAD
+!room_checkpoint_variant = $1FAF
+!room_checkpoint_previous_position = $1FB0
+!room_checkpoint_previous_camera_x = $1FB2
+!room_checkpoint_previous_camera_y = $1FB4
+!room_checkpoint_restore_pending = $1FB6
+!room_checkpoint_ball_count = $1FB7
 
 ; Hardware registers
+!inidisp = $2100
 !nmitimen = $4200
 !rdnmi = $4210
 !oam_address_low = $2102
 !oam_address_high = $2103
 !oam_data = $2104
+!hvbjoy = $4212
 
 ; Timer limits and conversion
 !timer_frames_per_second = 60
@@ -59,6 +85,14 @@ include
 !timer_state_stopped = $02
 !timer_visible_value = $01
 !timer_sequence_write_mask = $01
+!reset_latch_active = $01
+!room_checkpoint_active_value = $01
+!room_transition_standard = $02
+!room_camera_x_mask = $00F0
+!room_camera_y_mask = $000F
+!room_reset_blank_frames = 30
+!inidisp_forced_blank = $80
+!stack_initial = $01FF
 !decimal_base = 10
 !bcd_initial_tens = 0
 
@@ -94,5 +128,6 @@ include
 
 ; Processor status masks
 !status_accumulator_8bit = $20
+!status_accumulator_16bit = $20
 !status_index_16bit = $10
 !status_registers_8bit = $30
