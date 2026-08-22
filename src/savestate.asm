@@ -190,7 +190,7 @@ capture_palette:
     sep #!status_accumulator_8bit
     rep #!status_index_16bit
     stz !cgadd
-    ldx #$0000
+    ldx #!state_transfer_index_start
 -
     lda !cgdata_read
     sta !sram_cgram,x
@@ -198,7 +198,7 @@ capture_palette:
     sta !sram_cgram+1,x
     inx
     inx
-    cpx #$0200
+    cpx #!state_cgram_size
     bne -
     plp
     rts
@@ -208,7 +208,7 @@ restore_palette:
     sep #!status_accumulator_8bit
     rep #!status_index_16bit
     stz !cgadd
-    ldx #$0000
+    ldx #!state_transfer_index_start
 -
     lda !sram_cgram,x
     sta !cgdata_write
@@ -216,7 +216,7 @@ restore_palette:
     sta !cgdata_write
     inx
     inx
-    cpx #$0200
+    cpx #!state_cgram_size
     bne -
     plp
     rts
@@ -230,22 +230,22 @@ capture_sprites:
     rep #!status_index_16bit
     stz !oam_address_low
     stz !oam_address_high
-    ldx #$0000
+    ldx #!state_transfer_index_start
 -
     lda !oam_data_read
     sta !sram_oam,x
     inx
-    cpx #$0200
+    cpx #!state_oam_size
     bne -
     stz !oam_address_low
     lda #!oam_high_table_select
     sta !oam_address_high
-    ldx #$0000
+    ldx #!state_transfer_index_start
 -
     lda !oam_data_read
     sta !sram_oam_high,x
     inx
-    cpx #$0020
+    cpx #!state_oam_high_size
     bne -
     plp
     rts
@@ -256,22 +256,22 @@ restore_sprites:
     rep #!status_index_16bit
     stz !oam_address_low
     stz !oam_address_high
-    ldx #$0000
+    ldx #!state_transfer_index_start
 -
     lda !sram_oam,x
     sta !oam_data
     inx
-    cpx #$0200
+    cpx #!state_oam_size
     bne -
     stz !oam_address_low
     lda #!oam_high_table_select
     sta !oam_address_high
-    ldx #$0000
+    ldx #!state_transfer_index_start
 -
     lda !sram_oam_high,x
     sta !oam_data
     inx
-    cpx #$0020
+    cpx #!state_oam_high_size
     bne -
     plp
     rts
@@ -289,7 +289,7 @@ capture_vram:
     stz !vmaddr_high
     lda !vram_data_read_low
     lda !vram_data_read_high
-    ldx #$0000
+    ldx #!state_transfer_index_start
 -
     lda !vram_data_read_low
     sta !sram_vram,x
@@ -297,9 +297,9 @@ capture_vram:
     sta !sram_vram+1,x
     inx
     inx
-    cpx #$8000
+    cpx #!state_vram_chunk_size
     bne -
-    ldx #$0000
+    ldx #!state_transfer_index_start
 -
     lda !vram_data_read_low
     sta !sram_vram2,x
@@ -307,7 +307,7 @@ capture_vram:
     sta !sram_vram2+1,x
     inx
     inx
-    cpx #$8000
+    cpx #!state_vram_chunk_size
     bne -
     plp
     rts
@@ -320,7 +320,7 @@ restore_vram:
     sta !vmain
     stz !vmaddr_low
     stz !vmaddr_high
-    ldx #$0000
+    ldx #!state_transfer_index_start
 -
     lda !sram_vram,x
     sta !vram_data_write_low
@@ -328,9 +328,9 @@ restore_vram:
     sta !vram_data_write_high
     inx
     inx
-    cpx #$8000
+    cpx #!state_vram_chunk_size
     bne -
-    ldx #$0000
+    ldx #!state_transfer_index_start
 -
     lda !sram_vram2,x
     sta !vram_data_write_low
@@ -338,7 +338,7 @@ restore_vram:
     sta !vram_data_write_high
     inx
     inx
-    cpx #$8000
+    cpx #!state_vram_chunk_size
     bne -
     plp
     rts
@@ -348,38 +348,38 @@ restore_vram:
 ; ------------------------------------------------------------
 capture_wram:
     php
-    rep #!status_registers_8bit
-    ldx #$0000
+    rep #!status_registers_16bit
+    ldx #!state_transfer_index_start
 -
-    lda $7E0000,x
+    lda !state_wram_7e_low,x
     sta !sram_wram,x
     inx
     inx
-    cpx #$8000
+    cpx #!state_wram_chunk_size
     bne -
-    ldx #$0000
+    ldx #!state_transfer_index_start
 -
-    lda $7E8000,x
+    lda !state_wram_7e_high,x
     sta !sram_wram2,x
     inx
     inx
-    cpx #$8000
+    cpx #!state_wram_chunk_size
     bne -
-    ldx #$0000
+    ldx #!state_transfer_index_start
 -
-    lda $7F0000,x
+    lda !state_wram_7f_low,x
     sta !sram_wram3,x
     inx
     inx
-    cpx #$8000
+    cpx #!state_wram_chunk_size
     bne -
-    ldx #$0000
+    ldx #!state_transfer_index_start
 -
-    lda $7F8000,x
+    lda !state_wram_7f_high,x
     sta !sram_wram4,x
     inx
     inx
-    cpx #$8000
+    cpx #!state_wram_chunk_size
     bne -
     plp
     rts
@@ -388,38 +388,38 @@ capture_wram:
 ; WRAM 復元 (スタック未使用) + CPU 復元
 ; ------------------------------------------------------------
 restore_wram_and_cpu:
-    rep #!status_registers_8bit
-    ldx #$0000
+    rep #!status_registers_16bit
+    ldx #!state_transfer_index_start
 -
     lda !sram_wram,x
-    sta $7E0000,x
+    sta !state_wram_7e_low,x
     inx
     inx
-    cpx #$8000
+    cpx #!state_wram_chunk_size
     bne -
-    ldx #$0000
+    ldx #!state_transfer_index_start
 -
     lda !sram_wram2,x
-    sta $7E8000,x
+    sta !state_wram_7e_high,x
     inx
     inx
-    cpx #$8000
+    cpx #!state_wram_chunk_size
     bne -
-    ldx #$0000
+    ldx #!state_transfer_index_start
 -
     lda !sram_wram3,x
-    sta $7F0000,x
+    sta !state_wram_7f_low,x
     inx
     inx
-    cpx #$8000
+    cpx #!state_wram_chunk_size
     bne -
-    ldx #$0000
+    ldx #!state_transfer_index_start
 -
     lda !sram_wram4,x
-    sta $7F8000,x
+    sta !state_wram_7f_high,x
     inx
     inx
-    cpx #$8000
+    cpx #!state_wram_chunk_size
     bne -
     sep #!status_accumulator_8bit
     lda #!l_button

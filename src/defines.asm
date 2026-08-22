@@ -120,6 +120,18 @@ include
 !inidisp_forced_blank_full = $8F
 !inidisp_display_full = $0F
 !oam_high_table_select = $01
+!state_transfer_index_start = $0000
+!state_cgram_size = $0200
+!state_oam_size = $0200
+!state_oam_high_size = $0020
+!state_vram_chunk_size = $8000
+!state_wram_chunk_size = $8000
+
+; Save state WRAM sources
+!state_wram_7e_low = $7E0000
+!state_wram_7e_high = $7E8000
+!state_wram_7f_low = $7F0000
+!state_wram_7f_high = $7F8000
 
 ; Save state SRAM layout (256KB battery SRAM, 32KB per LoROM bank)
 !sram_wram = $700000
@@ -205,3 +217,4 @@ include
 !status_accumulator_16bit = $20
 !status_index_16bit = $10
 !status_registers_8bit = $30
+!status_registers_16bit = $30
