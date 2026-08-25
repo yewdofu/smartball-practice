@@ -185,10 +185,12 @@ include
 !menu_oam_backup_high = $770200
 !menu_oam_buffer = $770400
 !menu_oam_buffer_high = $770600
+!menu_palette_backup = $770620
 !menu_oam_backup_address = $0000
 !menu_oam_backup_high_address = $0200
 !menu_oam_buffer_address = $0400
 !menu_oam_buffer_high_address = $0600
+!menu_palette_backup_address = $0620
 !menu_oam_sram_bank = $77
 !ss_s = 0
 !ss_d = 2
@@ -260,8 +262,16 @@ include
 !menu_bgm_min = 0
 !menu_bgm_max = 1
 !menu_bgm_value_count = 2
-!menu_font_digit_base = $10
-!menu_font_cursor_tile = $1A
+!menu_font_digit_base = $00
+!menu_font_cursor_tile = $0A
+!menu_font_vram_word_address = $1000
+!menu_font_transfer_size = $04E0
+!menu_font_data_address = $F400
+!menu_font_data_bank = $1F
+!menu_font_palette_data_address = $F8E0
+!menu_font_palette_data_bank = $1F
+!menu_font_palette_size = $0020
+!menu_font_palette_cgram_address = $F0
 !controller_invert_mask = $FF
 !menu_hidden_tile = $FF
 !menu_oam_slot = 0
@@ -285,15 +295,19 @@ include
 !menu_y = $30
 !menu_tile_spacing = 8
 !menu_row_spacing = 16
-!menu_oam_attributes = $30
-!menu_oam_selected_attributes = $36
+!menu_oam_attributes = $3F
+!menu_oam_selected_attributes = $3F
 !menu_oam_hidden_y = $F0
 !menu_bgm_text_length = 3
 !bgm_silent_command = $00
 !dma_mode0_cpu_to_ppu = $00
 !dma_mode0_ppu_to_cpu = $80
+!dma_mode1_cpu_to_ppu = $01
 !dma_bbus_oam_write = $04
 !dma_bbus_oam_read = $38
+!dma_bbus_vram_write = $18
+!dma_bbus_cgram_write = $22
+!dma_bbus_cgram_read = $3B
 !dma_channel1_enable = $02
 
 ; NMI
@@ -310,9 +324,9 @@ include
 !timer_centisec_ones = 5
 
 ; Timer OAM
-!timer_tile_base = $10
-!timer_tile_period = $3F
-!timer_tile_colon = $3E
+!timer_tile_base = $00
+!timer_tile_period = $26
+!timer_tile_colon = $25
 !timer_period_marker = $FE
 !timer_colon_marker = $FF
 !timer_oam_slot = 112
@@ -320,7 +334,7 @@ include
 !timer_oam_count = 8
 !timer_oam_x = $B8
 !timer_oam_y = $08
-!timer_oam_attributes = $30
+!timer_oam_attributes = $33
 !timer_oam_hidden_y = $F0
 !timer_oam_high_table_address = $0E
 !timer_oam_high_table_flag = $01

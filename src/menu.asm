@@ -1,18 +1,11 @@
 include
 
-; Practice menu cursor (YY-CHR $50), mapped after digits to OBJ tile $1A.
-org $10E340
-    incbin "gfx/font.bin":$0140..$015F
-
-; Practice menu alphabet (A-Z), mapped to OBJ tiles $A0-$B9.
-org $10F400
-    incbin "gfx/font.bin":$0200..$053F
-
 org $00BCC0
 practice_menu_resume:
     jsr pause_setup
     jsr deactivate_practice_menu
     jsr wait_vblank_end
+    jsl restore_practice_menu_palette
     jsl restore_practice_menu_oam
     rts
 
@@ -425,13 +418,13 @@ draw_menu_value:
     rts
 
 menu_text:
-    db $AB,$A4,$B5,$A4,$AB,$FF
-    db $A0,$B1,$A4,$A0,$FF,$FF
-    db $AB,$A8,$B5,$A4,$B2,$FF
-    db $A7,$AF,$FF,$FF,$FF,$FF
-    db $A1,$A0,$AB,$AB,$B2,$FF
-    db $A1,$A6,$AC,$FF,$FF,$FF
-    db $A0,$AF,$AF,$AB,$B8,$FF
+    db $16,$0F,$20,$0F,$16,$FF
+    db $0B,$1C,$0F,$0B,$FF,$FF
+    db $16,$13,$20,$0F,$1D,$FF
+    db $12,$1A,$FF,$FF,$FF,$FF
+    db $0C,$0B,$16,$16,$1D,$FF
+    db $0C,$11,$17,$FF,$FF,$FF
+    db $0B,$1A,$1A,$16,$23,$FF
 
 warnpc $00C000
 
@@ -442,7 +435,7 @@ menu_min_values:
 menu_max_values:
     db 8,2,9,8,8,1
 menu_bgm_text:
-    db $AE,$AD,$FF,$AE,$A5,$A5
+    db $19,$18,$FF,$19,$10,$10
 deactivate_practice_menu:
     stz !menu_active
     rts
@@ -520,6 +513,20 @@ capture_practice_menu_oam:
     stx !dma1_transfer_size
     lda #!dma_channel1_enable
     sta !dma_enable
+    lda #!menu_font_palette_cgram_address
+    sta !cgadd
+    lda #!dma_mode0_ppu_to_cpu
+    sta !dma1_control
+    lda #!dma_bbus_cgram_read
+    sta !dma1_bbus_address
+    ldx.w #!menu_palette_backup_address
+    stx !dma1_source_address
+    lda #!menu_oam_sram_bank
+    sta !dma1_source_bank
+    ldx.w #!menu_font_palette_size
+    stx !dma1_transfer_size
+    lda #!dma_channel1_enable
+    sta !dma_enable
     plp
     rtl
 
@@ -547,6 +554,27 @@ restore_practice_menu_oam:
     ldx.w #!menu_oam_backup_high_address
     stx !dma1_source_address
     ldx.w #!state_oam_high_size
+    stx !dma1_transfer_size
+    lda #!dma_channel1_enable
+    sta !dma_enable
+    plp
+    rtl
+
+restore_practice_menu_palette:
+    php
+    sep #!status_accumulator_8bit
+    rep #!status_index_16bit
+    lda #!menu_font_palette_cgram_address
+    sta !cgadd
+    lda #!dma_mode0_cpu_to_ppu
+    sta !dma1_control
+    lda #!dma_bbus_cgram_write
+    sta !dma1_bbus_address
+    ldx.w #!menu_palette_backup_address
+    stx !dma1_source_address
+    lda #!menu_oam_sram_bank
+    sta !dma1_source_bank
+    ldx.w #!menu_font_palette_size
     stx !dma1_transfer_size
     lda #!dma_channel1_enable
     sta !dma_enable
@@ -665,6 +693,8 @@ open_practice_menu_display:
     lda !hvbjoy
     bpl .vblank
     jsl capture_practice_menu_oam
+    jsl transfer_practice_font
+    jsl transfer_practice_menu_palette
     jsl transfer_practice_menu_oam
     lda #!menu_active_value
     sta !menu_draw_initialized
@@ -837,5 +867,65 @@ build_practice_menu_oam:
     bcc .bgm
     plp
     rtl
+
+transfer_practice_font:
+    php
+    sep #!status_accumulator_8bit
+    rep #!status_index_16bit
+    ldy.w #!menu_font_data_address
+    lda #!menu_font_data_bank
+    pha
+    lda #!vmain_inc_high
+    sta !vmain
+    ldx.w #!menu_font_vram_word_address
+    stx !vmaddr_low
+    lda #!dma_mode1_cpu_to_ppu
+    sta !dma1_control
+    lda #!dma_bbus_vram_write
+    sta !dma1_bbus_address
+    sty !dma1_source_address
+    pla
+    sta !dma1_source_bank
+    ldx.w #!menu_font_transfer_size
+    stx !dma1_transfer_size
+    lda #!dma_channel1_enable
+    sta !dma_enable
+    plp
+    rtl
+
+transfer_practice_menu_palette:
+    php
+    sep #!status_accumulator_8bit
+    rep #!status_index_16bit
+    lda #!menu_font_palette_cgram_address
+    sta !cgadd
+    lda #!dma_mode0_cpu_to_ppu
+    sta !dma1_control
+    lda #!dma_bbus_cgram_write
+    sta !dma1_bbus_address
+    ldy.w #!menu_font_palette_data_address
+    sty !dma1_source_address
+    lda #!menu_font_palette_data_bank
+    sta !dma1_source_bank
+    ldx.w #!menu_font_palette_size
+    stx !dma1_transfer_size
+    lda #!dma_channel1_enable
+    sta !dma_enable
+    plp
+    rtl
 warnpc $1FF400
 pullpc
+
+org $1FF400
+practice_font_data:
+    incbin "gfx/font.bin":$0000..$0140
+    incbin "gfx/font.bin":$0140..$0160
+    incbin "gfx/font.bin":$0200..$0540
+    incbin "gfx/font.bin":$05C0..$05E0
+    incbin "gfx/font.bin":$05E0..$0600
+warnpc $1FF8E0
+
+org $1FF8E0
+practice_font_palette:
+    incbin "../patched/font.snes.pal"
+warnpc $1FF900
