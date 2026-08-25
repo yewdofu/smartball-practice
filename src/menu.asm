@@ -1,5 +1,9 @@
 include
 
+; Practice menu alphabet (A-Z), mapped to OBJ tiles $A0-$B9.
+org $10F400
+    incbin "gfx/font.bin":$0200..$053F
+
 org $00BCC0
 practice_menu_resume:
     jsr pause_setup
