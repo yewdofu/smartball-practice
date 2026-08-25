@@ -86,7 +86,6 @@ timer_frame_hook:
     phy
     jsr timer_update
     jsr draw_timer_oam
-    jsl draw_practice_hp_oam
     ply
     plx
     lda !controller_axlr  ; タイマーフレームフックで置換した元命令

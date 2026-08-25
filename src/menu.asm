@@ -220,9 +220,8 @@ apply_practice_settings:
     stz !menu_apply_pending
     lda !menu_lives
     sta !continue_count
-    lda !menu_hp
-    sta !player_hp
-    sta !player_max_hp
+    jsl apply_hp_setting
+    jsr draw_hp_oam_tiles
     jsl apply_ball_setting
 .done:
     rts
@@ -431,7 +430,7 @@ org $00B361
 menu_min_values:
     db 1,1,0,1,0,0
 menu_max_values:
-    db 8,2,9,8,8,1
+    db 8,2,9,5,8,1
 menu_bgm_text:
     db $19,$18,$FF,$19,$10,$10
 deactivate_practice_menu:
@@ -930,94 +929,35 @@ practice_font_palette:
 warnpc $1FF900
 
 org $1FF900
-draw_practice_hp_oam:
-    lda !menu_active
-    beq +
-    rtl
-+:
+apply_hp_setting:
     php
-    sep #!status_registers_8bit
-    cld
-
-    ldx #!hp_oam_first_entry
-.heart:
-    lda.l hp_oam_slots,x
-    asl
-    sta !oam_address_low
-    stz !oam_address_high
-    txa
-    inc
-    cmp !player_max_hp
-    bcc .visible
-    beq .visible
-    lda #!hp_oam_hidden_position
-    sta !oam_data
-    sta !oam_data
-    stz !oam_data
-    bra .attributes
-.visible:
-    txa
-    asl
-    asl
-    asl
-    asl
-    clc
-    adc #!hp_oam_x
-    sta !oam_data
-    lda #!hp_oam_y
-    sta !oam_data
-    txa
-    inc
-    cmp !player_hp
-    bcc .full
-    beq .full
-    lda #!hp_oam_empty_tile
-    bra .tile
-.full:
-    lda #!hp_oam_full_tile
-.tile:
-    sta !oam_data
-.attributes:
-    lda #!hp_oam_attributes
-    sta !oam_data
-    inx
-    cpx #!hp_oam_count
-    bne .heart
-
-    lda #!hp_oam_extra_high_table_address
-    sta !oam_address_low
-    lda #!oam_high_table_select
-    sta !oam_address_high
-    lda #!hp_oam_extra_high_table_flags
-    sta !oam_data
-
-    lda #!hp_oam_original_high_table_address
-    sta !oam_address_low
-    lda #!oam_high_table_select
-    sta !oam_address_high
-    lda !oam_data_read
-    and #!hp_oam_original_low_preserve_mask
-    ora #!hp_oam_original_low_size_flags
-    pha
-    lda !oam_data_read
-    and #!hp_oam_original_high_preserve_mask
-    ora #!hp_oam_original_high_size_flags
-    pha
-    lda #!hp_oam_original_high_table_address
-    sta !oam_address_low
-    lda #!oam_high_table_select
-    sta !oam_address_high
-    pla
-    tax
-    pla
-    sta !oam_data
-    txa
-    sta !oam_data
+    sep #!status_accumulator_8bit
+    rep #!status_index_16bit
+    lda !menu_hp
+    sta !player_hp
+    sta !player_max_hp
+    cmp #!hp_fourth_value
+    bcc .done
+    ldx.w #!hp_fourth_oam_address
+    ldy.w #!hp_fourth_oam_x
+    jsr .write_position
+    lda !menu_hp
+    cmp #!hp_fifth_value
+    bcc .done
+    ldx.w #!hp_fifth_oam_address
+    ldy.w #!hp_fifth_oam_x
+    jsr .write_position
+.done:
     plp
     rtl
 
-hp_oam_slots:
-    db 27,28,29,8,9,10,11,26
+.write_position:
+    stx !oam_address_low
+    tya
+    sta !oam_data
+    lda #!hp_extended_oam_y
+    sta !oam_data
+    rts
 
 apply_ball_setting:
     lda !menu_balls

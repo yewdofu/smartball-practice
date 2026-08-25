@@ -262,7 +262,7 @@ include
 !menu_lives_min = 0
 !menu_lives_max = 9
 !menu_hp_min = 1
-!menu_hp_max = 8
+!menu_hp_max = 5
 !menu_balls_min = 0
 !menu_balls_max = 8
 !menu_bgm_min = 0
@@ -352,22 +352,14 @@ include
 !timer_oam_high_table_flag = $01
 !timer_oam_first_entry = $00
 
-; HP OAM
-!hp_oam_count = 8
-!hp_oam_first_entry = 0
-!hp_oam_x = $60
-!hp_oam_y = $0C
-!hp_oam_full_tile = $44
-!hp_oam_empty_tile = $46
-!hp_oam_attributes = $30
-!hp_oam_hidden_position = $F0
-!hp_oam_extra_high_table_address = $01
-!hp_oam_extra_high_table_flags = $AA
-!hp_oam_original_high_table_address = $03
-!hp_oam_original_low_preserve_mask = $0F
-!hp_oam_original_low_size_flags = $A0
-!hp_oam_original_high_preserve_mask = $F0
-!hp_oam_original_high_size_flags = $0A
+; Extended HP OAM (same slots initialized by the heart pickup)
+!hp_fourth_value = 4
+!hp_fifth_value = 5
+!hp_fourth_oam_address = $003C
+!hp_fifth_oam_address = $003E
+!hp_fourth_oam_x = $0090
+!hp_fifth_oam_x = $00A0
+!hp_extended_oam_y = $0C
 
 ; Processor status masks
 !status_accumulator_8bit = $20

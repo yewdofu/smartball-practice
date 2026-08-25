@@ -42,6 +42,9 @@ apu_write_command:
 org $00B177
 draw_oam_table_entry:
 
+org $009217
+draw_hp_oam_tiles:
+
 org $00889C
 pause_setup:
 
