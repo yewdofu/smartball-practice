@@ -2,6 +2,7 @@ include
 
 org $00BCC0
 practice_menu_resume:
+    jsr load_bgm_setting
     jsr pause_setup
     jsr deactivate_practice_menu
     jsr wait_vblank_end
@@ -185,15 +186,11 @@ practice_menu_update:
     sta !menu_draw_pending
     bra .consumed
 .redraw_value:
-    lda !menu_cursor
-    cmp #!menu_bgm_item
-    bne +
-    jsr save_bgm_setting
-+:
     lda #!menu_draw_value
     sta !menu_draw_pending
     bra .consumed
 .apply:
+    jsr save_bgm_setting
     lda #!menu_request_value
     sta !menu_apply_pending
     sta !menu_resume_after_load
