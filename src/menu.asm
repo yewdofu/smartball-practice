@@ -1,5 +1,9 @@
 include
 
+; Practice menu cursor (YY-CHR $50), mapped after digits to OBJ tile $1A.
+org $10E340
+    incbin "gfx/font.bin":$0140..$015F
+
 ; Practice menu alphabet (A-Z), mapped to OBJ tiles $A0-$B9.
 org $10F400
     incbin "gfx/font.bin":$0200..$053F
@@ -479,7 +483,7 @@ draw_menu_cursor:
     clc
     adc #!menu_y
     sta !oam_data
-    lda #!menu_font_digit_base
+    lda #!menu_font_cursor_tile
     sta !oam_data
     lda #!menu_oam_selected_attributes
     sta !oam_data
@@ -706,7 +710,7 @@ build_practice_menu_oam:
     adc #!menu_y
     sta.l !menu_oam_buffer,x
     inx
-    lda #!menu_font_digit_base
+    lda #!menu_font_cursor_tile
     sta.l !menu_oam_buffer,x
     inx
     lda #!menu_oam_selected_attributes

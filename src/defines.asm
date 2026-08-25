@@ -261,6 +261,7 @@ include
 !menu_bgm_max = 1
 !menu_bgm_value_count = 2
 !menu_font_digit_base = $10
+!menu_font_cursor_tile = $1A
 !controller_invert_mask = $FF
 !menu_hidden_tile = $FF
 !menu_oam_slot = 0
