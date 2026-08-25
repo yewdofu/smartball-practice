@@ -14,8 +14,8 @@ ORIGINAL = "jerryboy.sfc"
 OUT_DIR = "patched"
 OUT_FILE = "sb_practice.sfc"
 OUT_PATH = os.path.join(OUT_DIR, OUT_FILE)
-PALETTE_SOURCE = os.path.join("src", "gfx", "font.pal")
-PALETTE_OUTPUT = os.path.join(OUT_DIR, "font.snes.pal")
+PALETTE_SOURCE = os.path.join("src", "gfx", "tiles.pal")
+PALETTE_OUTPUT = os.path.join(OUT_DIR, "tiles.snes.pal")
 PALETTE_FIRST_COLOR = 0xA0
 PALETTE_COLOR_COUNT = 16
 

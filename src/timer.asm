@@ -2,7 +2,7 @@ include
 
 ; ============================================================
 ; Timer HUD (OAM)
-;   font.bin の数字と記号を既存のOBJ HUDタイルへ組み込む。
+;   tiles.bin の数字と記号を既存のOBJ HUDタイルへ組み込む。
 ;   OAM 112-119 に "MM:SS:cc" を表示する。
 ; ============================================================
 org $00FFEA
@@ -10,11 +10,11 @@ org $00FFEA
 
 pushpc
 org $10E200
-    incbin "gfx/font.bin":$0000..$0140
+    incbin "gfx/tiles.bin":$0000..$0140
 org $10E7C0
-    incbin "gfx/font.bin":$05C0..$05E0
+    incbin "gfx/tiles.bin":$05C0..$05E0
 org $10E7E0
-    incbin "gfx/font.bin":$05E0..$0600
+    incbin "gfx/tiles.bin":$05E0..$0600
 pullpc
 
 ; ------------------------------------------------------------

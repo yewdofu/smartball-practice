@@ -916,16 +916,16 @@ pullpc
 
 org $1FF400
 practice_font_data:
-    incbin "gfx/font.bin":$0000..$0140
-    incbin "gfx/font.bin":$0140..$0160
-    incbin "gfx/font.bin":$0200..$0540
-    incbin "gfx/font.bin":$05C0..$05E0
-    incbin "gfx/font.bin":$05E0..$0600
+    incbin "gfx/tiles.bin":$0000..$0140
+    incbin "gfx/tiles.bin":$0140..$0160
+    incbin "gfx/tiles.bin":$0200..$0540
+    incbin "gfx/tiles.bin":$05C0..$05E0
+    incbin "gfx/tiles.bin":$05E0..$0600
 warnpc $1FF8E0
 
 org $1FF8E0
 practice_font_palette:
-    incbin "../patched/font.snes.pal"
+    incbin "../patched/tiles.snes.pal"
 warnpc $1FF900
 
 org $1FF900
