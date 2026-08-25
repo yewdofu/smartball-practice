@@ -69,8 +69,6 @@ practice_menu_pause_enter:
     sta !menu_hp
     lda !ball_count
     sta !menu_balls
-    lda !player_state
-    sta !menu_form
     jsl open_practice_menu_display
     rts
 
@@ -125,7 +123,9 @@ practice_menu_update:
 .a_pressed:
     lda !menu_cursor
     cmp #!menu_apply_item
-    beq .apply
+    bne +
+    jmp .apply
++:
     bra .increment
 .cancel:
     lda #!menu_request_value
@@ -184,6 +184,11 @@ practice_menu_update:
     sta !menu_draw_pending
     bra .consumed
 .redraw_value:
+    lda !menu_cursor
+    cmp #!menu_bgm_item
+    bne +
+    jsr save_bgm_setting
++:
     lda #!menu_draw_value
     sta !menu_draw_pending
     bra .consumed
@@ -220,8 +225,6 @@ apply_practice_settings:
     sta !player_max_hp
     lda !menu_balls
     sta !ball_count
-    lda !menu_form
-    sta !player_state
 .done:
     rts
 
@@ -243,6 +246,21 @@ queue_bgm:
     pla
 .store:
     sta !apu_command
+    rts
+
+load_bgm_setting:
+    lda.l !sram_bgm_disabled
+    cmp #!menu_bgm_value_count
+    bcc .valid
+    lda #!menu_bgm_min
+    sta.l !sram_bgm_disabled
+.valid:
+    sta !menu_bgm_disabled
+    rts
+
+save_bgm_setting:
+    lda !menu_bgm_disabled
+    sta.l !sram_bgm_disabled
     rts
 
 draw_practice_menu:
@@ -404,7 +422,6 @@ menu_text:
     db $AB,$A8,$B5,$A4,$B2,$FF
     db $A7,$AF,$FF,$FF,$FF,$FF
     db $A1,$A0,$AB,$AB,$B2,$FF
-    db $A5,$AE,$B1,$AC,$FF,$FF
     db $A1,$A6,$AC,$FF,$FF,$FF
     db $A0,$AF,$AF,$AB,$B8,$FF
 
@@ -413,9 +430,9 @@ warnpc $00C000
 pushpc
 org $00B361
 menu_min_values:
-    db 1,1,0,1,0,0,0
+    db 1,1,0,1,0,0
 menu_max_values:
-    db 8,2,9,8,8,5,1
+    db 8,2,9,8,8,1
 menu_bgm_text:
     db $AE,$AD,$FF,$AE,$A5,$A5
 deactivate_practice_menu:

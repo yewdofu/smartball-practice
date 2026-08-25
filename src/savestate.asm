@@ -11,6 +11,7 @@ include
 ;     $76:0200-$76:03FF : OAM 低テーブル
 ;     $76:0400-$76:041F : OAM 高テーブル
 ;     $76:0420-         : CPU状態
+;     $76:0440          : BGM設定
 ; ============================================================
 
 ; ------------------------------------------------------------
@@ -422,6 +423,7 @@ restore_wram_and_cpu:
     cpx #!state_wram_chunk_size
     bne -
     sep #!status_accumulator_8bit
+    jsr load_bgm_setting
     lda #!l_button
     sta !controller_axlr
     lda #!start_button

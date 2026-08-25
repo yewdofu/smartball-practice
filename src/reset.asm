@@ -191,6 +191,7 @@ prepare_level_load:
     stz !room_timer_capture_pending
     stz !room_timer_restore_pending
     stz !room_hp_restore_pending
+    jsr load_bgm_setting
     lda !level_idx_level2 ; original instruction
     rts
 
