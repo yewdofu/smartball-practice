@@ -6,6 +6,7 @@ practice_menu_resume:
     jsr pause_setup
     jsr deactivate_practice_menu
     jsr wait_vblank_end
+    jsl restore_practice_font_vram
     jsl restore_practice_menu_palette
     jsl restore_practice_menu_oam
     rts
@@ -190,7 +191,8 @@ practice_menu_update:
     sta !menu_draw_pending
     bra .consumed
 .apply:
-    jsr save_bgm_setting
+    jsl apply_bgm_and_check_reload
+    bcs .cancel
     lda #!menu_request_value
     sta !menu_apply_pending
     sta !menu_resume_after_load
@@ -221,8 +223,7 @@ apply_practice_settings:
     lda !menu_hp
     sta !player_hp
     sta !player_max_hp
-    lda !menu_balls
-    sta !ball_count
+    jsl apply_ball_setting
 .done:
     rts
 
@@ -690,6 +691,7 @@ open_practice_menu_display:
     lda !hvbjoy
     bpl .vblank
     jsl capture_practice_menu_oam
+    jsl capture_practice_font_vram
     jsl transfer_practice_font
     jsl transfer_practice_menu_palette
     jsl transfer_practice_menu_oam
@@ -926,3 +928,199 @@ org $1FF8E0
 practice_font_palette:
     incbin "../patched/font.snes.pal"
 warnpc $1FF900
+
+org $1FF900
+draw_practice_hp_oam:
+    lda !menu_active
+    beq +
+    rtl
++:
+    php
+    sep #!status_registers_8bit
+    cld
+
+    ldx #!hp_oam_first_entry
+.heart:
+    lda.l hp_oam_slots,x
+    asl
+    sta !oam_address_low
+    stz !oam_address_high
+    txa
+    inc
+    cmp !player_max_hp
+    bcc .visible
+    beq .visible
+    lda #!hp_oam_hidden_position
+    sta !oam_data
+    sta !oam_data
+    stz !oam_data
+    bra .attributes
+.visible:
+    txa
+    asl
+    asl
+    asl
+    asl
+    clc
+    adc #!hp_oam_x
+    sta !oam_data
+    lda #!hp_oam_y
+    sta !oam_data
+    txa
+    inc
+    cmp !player_hp
+    bcc .full
+    beq .full
+    lda #!hp_oam_empty_tile
+    bra .tile
+.full:
+    lda #!hp_oam_full_tile
+.tile:
+    sta !oam_data
+.attributes:
+    lda #!hp_oam_attributes
+    sta !oam_data
+    inx
+    cpx #!hp_oam_count
+    bne .heart
+
+    lda #!hp_oam_extra_high_table_address
+    sta !oam_address_low
+    lda #!oam_high_table_select
+    sta !oam_address_high
+    lda #!hp_oam_extra_high_table_flags
+    sta !oam_data
+
+    lda #!hp_oam_original_high_table_address
+    sta !oam_address_low
+    lda #!oam_high_table_select
+    sta !oam_address_high
+    lda !oam_data_read
+    and #!hp_oam_original_low_preserve_mask
+    ora #!hp_oam_original_low_size_flags
+    pha
+    lda !oam_data_read
+    and #!hp_oam_original_high_preserve_mask
+    ora #!hp_oam_original_high_size_flags
+    pha
+    lda #!hp_oam_original_high_table_address
+    sta !oam_address_low
+    lda #!oam_high_table_select
+    sta !oam_address_high
+    pla
+    tax
+    pla
+    sta !oam_data
+    txa
+    sta !oam_data
+    plp
+    rtl
+
+hp_oam_slots:
+    db 27,28,29,8,9,10,11,26
+
+apply_ball_setting:
+    lda !menu_balls
+    sta !ball_count
+    beq .no_balls
+    lda #!player_state_ball
+    sta !player_state
+    rtl
+.no_balls:
+    stz !player_state
+    rtl
+
+apply_bgm_and_check_reload:
+    lda !menu_bgm_disabled
+    cmp.l !sram_bgm_disabled
+    beq .check_reload
+    sta.l !sram_bgm_disabled
+    cmp #!menu_bgm_min
+    beq .enable
+    lda #!apu_reset_command
+    sta !apu_io0
+    stz !apu_command_delay
+    stz !apu_command_wait
+    stz !apu_command
+    bra .check_reload
+.enable:
+    lda #!bgm_enable_command
+    sta !apu_io0
+    lda !level_idx_level
+    clc
+    adc #!level_bgm_command_offset
+    sta !apu_command
+    lda #!apu_command_delay_start
+    sta !apu_command_delay
+    stz !apu_command_wait
+
+.check_reload:
+    lda !menu_level
+    cmp !level_idx_world
+    bne .reload
+    lda !menu_area
+    cmp !level_idx_level
+    bne .reload
+    lda !menu_lives
+    cmp !continue_count
+    bne .reload
+    lda !menu_hp
+    cmp !player_hp
+    bne .reload
+    lda !menu_balls
+    cmp !ball_count
+    bne .reload
+    sec
+    rtl
+.reload:
+    clc
+    rtl
+
+capture_practice_font_vram:
+    php
+    sep #!status_accumulator_8bit
+    rep #!status_index_16bit
+    lda #!vmain_inc_high
+    sta !vmain
+    ldx.w #!menu_font_vram_word_address
+    stx !vmaddr_low
+    lda !vram_data_read_low
+    lda !vram_data_read_high
+    lda #!dma_mode1_ppu_to_cpu
+    sta !dma1_control
+    lda #!dma_bbus_vram_read
+    sta !dma1_bbus_address
+    ldx.w #!menu_font_vram_backup_address
+    stx !dma1_source_address
+    lda #!menu_oam_sram_bank
+    sta !dma1_source_bank
+    ldx.w #!menu_font_transfer_size
+    stx !dma1_transfer_size
+    lda #!dma_channel1_enable
+    sta !dma_enable
+    plp
+    rtl
+
+restore_practice_font_vram:
+    php
+    sep #!status_accumulator_8bit
+    rep #!status_index_16bit
+    lda #!vmain_inc_high
+    sta !vmain
+    ldx.w #!menu_font_vram_word_address
+    stx !vmaddr_low
+    lda #!dma_mode1_cpu_to_ppu
+    sta !dma1_control
+    lda #!dma_bbus_vram_write
+    sta !dma1_bbus_address
+    ldx.w #!menu_font_vram_backup_address
+    stx !dma1_source_address
+    lda #!menu_oam_sram_bank
+    sta !dma1_source_bank
+    ldx.w #!menu_font_transfer_size
+    stx !dma1_transfer_size
+    lda #!dma_channel1_enable
+    sta !dma_enable
+    plp
+    rtl
+warnpc $1FFFFF

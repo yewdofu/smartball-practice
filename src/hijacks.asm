@@ -28,6 +28,10 @@ org $0086E3
 org $008D48
     jsr practice_menu_game_oam_guard
 
+org $009217
+    jsl draw_practice_hp_oam
+    rts
+
 org $008715
     jsr practice_menu_should_pause
     bcs pause_loop

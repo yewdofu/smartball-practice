@@ -2,11 +2,20 @@ include
 
 ; ============================================================
 ; Timer HUD (OAM)
-;   font.bin の数字と記号をOBJ第2ネームテーブルへ組み込む。
+;   font.bin の数字と記号を既存のOBJ HUDタイルへ組み込む。
 ;   OAM 112-119 に "MM:SS:cc" を表示する。
 ; ============================================================
 org $00FFEA
     dw timer_nmi
+
+pushpc
+org $10E200
+    incbin "gfx/font.bin":$0000..$0140
+org $10E7C0
+    incbin "gfx/font.bin":$05C0..$05E0
+org $10E7E0
+    incbin "gfx/font.bin":$05E0..$0600
+pullpc
 
 ; ------------------------------------------------------------
 ; レベル準備完了時はタイマーを待機状態にする。
@@ -22,7 +31,6 @@ org $00B3A0
 timer_prepare:
     jsr timer_deactivate
     jsr wait_vblank_end
-    jsl transfer_practice_font
     jsr apply_practice_settings
     lda !room_timer_restore_pending
     beq .gameplay
@@ -78,6 +86,7 @@ timer_frame_hook:
     phy
     jsr timer_update
     jsr draw_timer_oam
+    jsl draw_practice_hp_oam
     ply
     plx
     lda !controller_axlr  ; タイマーフレームフックで置換した元命令

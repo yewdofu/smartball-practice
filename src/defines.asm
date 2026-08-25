@@ -30,12 +30,15 @@ include
 !player_hp = $1E7C
 !player_max_hp = $1E7B
 !continue_count = $1E7E
+!apu_command_delay = $1E4C
+!apu_command_wait = $1E4D
 !apu_command = $1E4E
 !highest_unlocked_level = $1E33
 !all_levels_unlocked = $0F
 
 ; Player position
 !player_state = $0449
+!player_state_ball = $02
 !position_x = $1E2F
 !position_y = $1E31
 !ball_count = $1E3C
@@ -110,6 +113,7 @@ include
 
 ; Hardware registers
 !inidisp = $2100
+!apu_io0 = $2140
 !nmitimen = $4200
 !rdnmi = $4210
 !oam_address_low = $2102
@@ -186,11 +190,13 @@ include
 !menu_oam_buffer = $770400
 !menu_oam_buffer_high = $770600
 !menu_palette_backup = $770620
+!menu_font_vram_backup = $770640
 !menu_oam_backup_address = $0000
 !menu_oam_backup_high_address = $0200
 !menu_oam_buffer_address = $0400
 !menu_oam_buffer_high_address = $0600
 !menu_palette_backup_address = $0620
+!menu_font_vram_backup_address = $0640
 !menu_oam_sram_bank = $77
 !ss_s = 0
 !ss_d = 2
@@ -300,12 +306,18 @@ include
 !menu_oam_hidden_y = $F0
 !menu_bgm_text_length = 3
 !bgm_silent_command = $00
+!bgm_enable_command = $02
+!level_bgm_command_offset = $05
+!apu_command_delay_start = $04
+!apu_reset_command = $F0
 !dma_mode0_cpu_to_ppu = $00
 !dma_mode0_ppu_to_cpu = $80
 !dma_mode1_cpu_to_ppu = $01
+!dma_mode1_ppu_to_cpu = $81
 !dma_bbus_oam_write = $04
 !dma_bbus_oam_read = $38
 !dma_bbus_vram_write = $18
+!dma_bbus_vram_read = $39
 !dma_bbus_cgram_write = $22
 !dma_bbus_cgram_read = $3B
 !dma_channel1_enable = $02
@@ -324,9 +336,9 @@ include
 !timer_centisec_ones = 5
 
 ; Timer OAM
-!timer_tile_base = $00
-!timer_tile_period = $26
-!timer_tile_colon = $25
+!timer_tile_base = $10
+!timer_tile_period = $3F
+!timer_tile_colon = $3E
 !timer_period_marker = $FE
 !timer_colon_marker = $FF
 !timer_oam_slot = 112
@@ -334,11 +346,28 @@ include
 !timer_oam_count = 8
 !timer_oam_x = $B8
 !timer_oam_y = $08
-!timer_oam_attributes = $33
+!timer_oam_attributes = $30
 !timer_oam_hidden_y = $F0
 !timer_oam_high_table_address = $0E
 !timer_oam_high_table_flag = $01
 !timer_oam_first_entry = $00
+
+; HP OAM
+!hp_oam_count = 8
+!hp_oam_first_entry = 0
+!hp_oam_x = $60
+!hp_oam_y = $0C
+!hp_oam_full_tile = $44
+!hp_oam_empty_tile = $46
+!hp_oam_attributes = $30
+!hp_oam_hidden_position = $F0
+!hp_oam_extra_high_table_address = $01
+!hp_oam_extra_high_table_flags = $AA
+!hp_oam_original_high_table_address = $03
+!hp_oam_original_low_preserve_mask = $0F
+!hp_oam_original_low_size_flags = $A0
+!hp_oam_original_high_preserve_mask = $F0
+!hp_oam_original_high_size_flags = $0A
 
 ; Processor status masks
 !status_accumulator_8bit = $20
