@@ -10,6 +10,10 @@ Speedrun practice hack for Smart Ball (SNES).
 - In-game timer
 - Save state (R + Start)
 - Load state (L + Start)
+- Pause practice menu (D-pad + A/B)
+
+The pause menu configures the starting level/area, lives, HP, ball count,
+player form, and BGM. Select `APPLY` to reload the level with the new settings.
 
 Save states use 256KB of battery-backed SRAM and are available during gameplay.
 

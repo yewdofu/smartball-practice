@@ -471,4 +471,4 @@ state_resume:
     ldx !frame_counter_t
     jmp game_update_continue
 
-warnpc $00C000
+warnpc $00BCC0

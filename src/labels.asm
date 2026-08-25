@@ -23,3 +23,33 @@ room_load_finalize:
 
 org $0088CF
 game_update_continue:
+
+org $0086DE
+pause_loop:
+
+org $0086E6
+pause_loop_continue:
+
+org $008721
+gameplay_loop:
+
+org $00A673
+wait_vblank_end:
+
+org $00AFA3
+apu_write_command:
+
+org $00B177
+draw_oam_table_entry:
+
+org $00889C
+pause_setup:
+
+org $00A740
+pause_gfx_prepare:
+
+org $018A9D
+oam_dma_continue:
+
+org $018AC7
+oam_dma_return:

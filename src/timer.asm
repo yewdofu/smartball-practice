@@ -30,6 +30,7 @@ pullpc
 org $00B3A0
 timer_prepare:
     jsr timer_deactivate
+    jsr apply_practice_settings
     lda !room_timer_restore_pending
     beq .gameplay
     lda #!room_timer_restore_ready_value
@@ -151,6 +152,10 @@ timer_deactivate:
 ; OAM 112-119 に MM:SS:cc を描画
 ; ------------------------------------------------------------
 draw_timer_oam:
+    lda !menu_active
+    beq +
+    rts
++:
     php
     sep #!status_registers_8bit
     cld
@@ -291,6 +296,8 @@ warnpc $00B600
 org $00B600
 timer_nmi:
     pha
+    phx
+    phy
     phb
     php
     sep #!status_accumulator_8bit
@@ -332,6 +339,8 @@ timer_nmi:
 .done:
     plp
     plb
+    ply
+    plx
     pla
     rti
 

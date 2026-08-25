@@ -185,6 +185,7 @@ warnpc $00B800
 
 org $00B900
 prepare_level_load:
+    stz !menu_active
     stz !room_checkpoint_active
     stz !room_checkpoint_restore_pending
     stz !room_timer_capture_pending

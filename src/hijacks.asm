@@ -4,6 +4,54 @@ org $0088CC
 update_game:
     jsr ingame_patch
 
+org $0086FF
+    jsr practice_menu_should_resume
+    bcc pause_loop_continue
+    lda #!pause_resume_sound
+    jsr draw_oam_table_entry
+    jsr practice_menu_resume
+    bra gameplay_loop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+
+org $0086F9
+    jsr practice_menu_pause_oam_guard
+
+org $0086E3
+    jsr practice_menu_pause_oam_guard
+
+org $008D48
+    jsr practice_menu_game_oam_guard
+
+org $008715
+    jsr practice_menu_should_pause
+    bcs pause_loop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+
+org $018A98
+    jml practice_menu_oam_dma_guard
+    nop
+
+org $00842F
+    jsr play_level_bgm
+
+org $00853F
+    jsr queue_bgm
+
+org $00AFB7
+    jsr queue_bgm
+
 org $00840D
     jsr prepare_level_load
 

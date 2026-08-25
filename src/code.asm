@@ -9,12 +9,15 @@ org $008227
 
 org $00B330
 ingame_patch:
+    jsr practice_menu_update
+    bcs .done
     jsr change_level
     jsr open_stage_select
     jsr reload_level
     jsr reload_room
     jsr state_save
     jsr state_load
+.done:
     ldx !frame_counter_t ; original instruction
     rts
 
