@@ -1,5 +1,13 @@
 include
 
+; Region
+!REGION_J = 0
+!REGION_U = 1
+
+function JP_US(j, u) = select(equal(!REGION, !REGION_J), j, u)
+
+!state_rom_compatibility = JP_US($01, $02)
+
 ; Controller
 !controller_axlr = $046B
 !controller_byetudlr = $046C
@@ -150,7 +158,6 @@ include
 !state_magic_low = $5B
 !state_magic_invalid = $00
 !state_format_version = $01
-!state_rom_compatibility = $01
 !state_save_stack_offset = $000A
 !state_stack_y_low = $01
 !state_stack_y_high = $02

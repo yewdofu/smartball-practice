@@ -17,16 +17,6 @@ org $10E7E0
     incbin "gfx/tiles.bin":$05E0..$0600
 pullpc
 
-; ------------------------------------------------------------
-; レベル準備完了時はタイマーを待機状態にする。
-; ------------------------------------------------------------
-pushpc
-org $0085B7
-    jsr timer_prepare
-    nop
-    nop
-pullpc
-
 org $00B3A0
 timer_prepare:
     jsr timer_deactivate
@@ -72,14 +62,6 @@ timer_update:
 .done:
     plp
     rts
-
-; ------------------------------------------------------------
-; メインループ側のタイマー状態更新とHUD描画
-; ------------------------------------------------------------
-pushpc
-org $009283
-    jsr timer_frame_hook
-pullpc
 
 timer_frame_hook:
     phx

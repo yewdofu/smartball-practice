@@ -116,7 +116,7 @@ save_state:
     sta !sram_regs+!ss_pc_h
     lda #!state_format_version
     sta !sram_regs+!ss_format_version
-    lda #!state_rom_compatibility
+    lda.b #!state_rom_compatibility
     sta !sram_regs+!ss_rom_compatibility
     ply
     plx
@@ -160,7 +160,7 @@ load_state:
     cmp #!state_format_version
     bne .invalid
     lda !sram_regs+!ss_rom_compatibility
-    cmp #!state_rom_compatibility
+    cmp.b #!state_rom_compatibility
     bne .invalid
     stz !nmitimen
     jsr force_state_blank

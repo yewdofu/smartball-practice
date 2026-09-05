@@ -1,54 +1,54 @@
 include
 
-org $00840D
+org JP_US($00840D, $0083B3)
 load_level:
 
-org $0084F3
+org JP_US($0084F3, $008499)
 load_room:
 
-org $0084BA
+org JP_US($0084BA, $008460)
 load_current_area:
 
-org $008266
+org JP_US($008266, $008212)
 stage_select_init:
 
-org $00B162
+org JP_US($00B162, $00B119)
 calc_stage_index:
 
-org $00B294
+org JP_US($00B294, $00B24B)
 room_transition_fade_in:
 
-org $0088AF
+org JP_US($0088AF, $008862)
 room_load_finalize:
 
-org $0088CF
+org JP_US($0088CF, $008882)
 game_update_continue:
 
-org $0086DE
+org JP_US($0086DE, $008691)
 pause_loop:
 
-org $0086E6
+org JP_US($0086E6, $008699)
 pause_loop_continue:
 
-org $008721
+org JP_US($008721, $0086D4)
 gameplay_loop:
 
-org $00A673
+org JP_US($00A673, $00A62A)
 wait_vblank_end:
 
-org $00AFA3
+org JP_US($00AFA3, $00AF5A)
 apu_write_command:
 
-org $00B177
+org JP_US($00B177, $00B12E)
 draw_oam_table_entry:
 
-org $009217
+org JP_US($009217, $0091CE)
 draw_hp_oam_tiles:
 
-org $00889C
+org JP_US($00889C, $00884F)
 pause_setup:
 
-org $00A740
+org JP_US($00A740, $00A6F7)
 pause_gfx_prepare:
 
 org $018A9D
